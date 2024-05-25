@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "404585085347",
+    "project_id": "mcauthapp-34bb6",
+    "storage_bucket": "mcauthapp-34bb6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404585085347:android:dd098017317603699f8216",
+        "android_client_info": {
+          "package_name": "com.example.madinati"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG8KqXUfzOdMIYZi34r1lnBFaiVh5rzOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

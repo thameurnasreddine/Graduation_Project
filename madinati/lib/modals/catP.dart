@@ -1,0 +1,10 @@
+ class catP {
+final String id ;
+final String title ;
+final String imageName;
+
+   const catP({required this.id, required this.title, required this.imageName});
+
+
+
+ }
