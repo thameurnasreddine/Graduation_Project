@@ -1,16 +1,50 @@
-# madinati
+# تطبيق مدينتي
 
-A new Flutter project.
+تطبيق **مدينتي** هو تطبيق موبايل تم تطويره باستخدام Flutter كمشروع تخرج في إطار برنامج المؤسسة الناشئة، وحاصل على شهادة مؤسسة ناشئة من جامعة ابن خلدون – تيارت.
 
-## Getting Started
+## فكرة المشروع
 
-This project is a starting point for a Flutter application.
+يسمح التطبيق للمواطنين بالإبلاغ عن مختلف المشاكل في المدينة مثل:
+- أعطال أو مشاكل في قطاع الكهرباء
+- تسربات المياه
+- مشاكل الطرقات أو النظافة
+- ... وغيرها من القطاعات
 
-A few resources to get you started if this is your first Flutter project:
+يهدف التطبيق إلى تسهيل تواصل المواطنين مع الجهات المعنية وتحسين جودة الحياة في المدينة.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## التقنيات المستخدمة
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Flutter** & **Dart** (لتطوير الواجهة والتطبيق)
+- **Firebase** (قاعدة بيانات، مصادقة، تخزين صور ...)
+- **Figma** (لتصميم الواجهات)
+- أدوات وتقنيات أخرى حسب الحاجة
+
+## صور من التطبيق
+
+ضع صور الشاشة هنا بعد رفعها في مجلد `assets/screenshots` مثلاً:
+
+![screenshot1](assets/screenshots/screenshot1.png)
+![screenshot2](assets/screenshots/screenshot2.png)
+
+## طريقة التشغيل
+
+```bash
+git clone https://github.com/thameurnasreddine/medinati.git
+cd medinati
+flutter pub get
+flutter run
+```
+
+> **ملاحظة:** تأكد من إعداد بيئة Flutter ووجود جهاز محاكي أو هاتف متصل.
+
+## معلومات عن المشروع
+
+- **مشروع تخرج:** مؤسسة ناشئة، جامعة ابن خلدون تيارت
+- **المطور:** ثامر نصر الدين (thameurnasreddine)
+- **الشهادة:** حاصل على شهادة مؤسسة ناشئة
+
+---
+
+### تواصل
+
+لأي استفسار أو اقتراح، يرجى التواصل عبر [GitHub](https://github.com/thameurnasreddine) أو عبر البريد الإلكتروني: nasreddine.thameur@univ-tiaret.dz
