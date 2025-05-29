@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
  class catP {
 final String id ;
 final String title ;

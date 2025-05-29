@@ -32,10 +32,12 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+
     }
 
     kotlinOptions {
         jvmTarget = '1.8'
+
     }
 
     sourceSets {
@@ -61,6 +63,12 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    
+    lintOptions {
+        warningsAsErrors true
+        textReport true
+        textOutput 'stdout'
+    }
 }
 
 flutter {
@@ -70,5 +78,5 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.8.1')
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }

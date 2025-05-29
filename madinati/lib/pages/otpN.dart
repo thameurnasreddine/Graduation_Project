@@ -1,7 +1,11 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/auth_provider.dart';
+
+
 
 class otpN extends StatefulWidget {
   const otpN({super.key});
@@ -10,13 +14,13 @@ class otpN extends StatefulWidget {
   State<otpN> createState() => _otpNState();
 }
 
-// ignore: camel_case_types
+
 class _otpNState extends State<otpN> {
   final TextEditingController phonecontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-   
+    final isLoading = Provider.of<AuthProvider>(context, listen: true).isLoading;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -67,7 +71,7 @@ class _otpNState extends State<otpN> {
                             ),
                             controller: phonecontroller,
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 18),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 18),
                               suffixIcon: Row(
                                 mainAxisSize:MainAxisSize.min ,
                                 children: [
@@ -120,6 +124,8 @@ class _otpNState extends State<otpN> {
                   // const SizedBox(
                   //   height: 20,
                   // ),
+                 
+
                   SizedBox(
                     height: 50,
                     width: double.infinity,
@@ -128,18 +134,24 @@ class _otpNState extends State<otpN> {
                       // style: ButtonStyle(backgroundColor:Colors(0x000000),
                          style: ElevatedButton.styleFrom(backgroundColor: Colors.black ),
                       
-                      onPressed: () {
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              SendPhoneNumber();
+                            },
+                      child: isLoading
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : const Text(
+                              'إرسال',
+                              style: TextStyle(fontSize: 15, color: Colors.white),
+                            ),
 
-
-                      SendPhoneNumber();
-
-                      },
+                      
                      
 
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 15,color: Colors.white),
-                      ),
+                      
                       // style: const ButtonStyle(backgroundColor:),
                     ),
                   ),
@@ -151,11 +163,18 @@ class _otpNState extends State<otpN> {
       ),
     );
   }
-   void SendPhoneNumber(){
-         final ap =Provider.of<AuthProvider>(context,listen :false)  ;
-         
-          String phoneNumber =phonecontroller.text.trim();
+   // ignore: non_constant_identifier_names
+   void SendPhoneNumber() {
+  try {
+    final ap = Provider.of<AuthProvider>(context, listen: false);
+    String phoneNumber = phonecontroller.text.trim();
+    ap.signInWithPhone(context, "+213$phoneNumber");
+  // ignore: unused_catch_stack
+  } catch (e, stackTrace) {
+    // print('Error occurred in SendPhoneNumber: $e');
+    // print(stackTrace);
+  }
+}
 
-ap.signInWithPhone(context, "+213$phoneNumber");
-        }
+
 }

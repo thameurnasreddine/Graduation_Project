@@ -1,10 +1,13 @@
+
+
 import 'package:flutter/material.dart';
-import '../pages/reportP.dart';
+import '../pages/reportp.dart';
 
 // ignore: camel_case_types
 class catitemp extends StatelessWidget {
   final String imagename;
   final String title;
+  
   // ignore: non_constant_identifier_names
   final String Catproblmid;
 
@@ -12,12 +15,13 @@ class catitemp extends StatelessWidget {
       {super.key,
       required this.imagename,
       required this.title,
+      // ignore: non_constant_identifier_names
       required this.Catproblmid});
 
   void selectproblem(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (c) => ReportP(problmid: Catproblmid, probmTitle: title, file: '', localisation: '', details: '', type: '',),
+        builder: (c) => ReportP(problmid: Catproblmid, probmTitle: title),
       ),
     );
   }

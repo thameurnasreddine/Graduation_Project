@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: camel_case_types
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:madinati/pages/problmCat.dart';
 import 'package:madinati/utils/util.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
-import 'package:madinati/provider/auth_provider.dart';
-
-import 'package:firebase_auth_platform_interface/src/auth_provider.dart' as firebase_auth;
 import 'package:madinati/provider/auth_provider.dart' as custom_auth;
 
 
@@ -14,20 +15,58 @@ import 'package:madinati/provider/auth_provider.dart' as custom_auth;
 
 class otpNv extends StatefulWidget {
   final String verificationId;
-  const otpNv({super.key, required this.verificationId});
+  final String phoneNumber;
+
+  const otpNv({super.key, required this.verificationId, required this.phoneNumber});
 
   @override
   State<otpNv> createState() => _otpNvState();
 }
 
 class _otpNvState extends State<otpNv> {
-  String? otpcode;
+
+   String? otpcode;
+  late TextEditingController pinController;
+  Timer? _resendTimer;
+  bool _isResendEnabled = false; 
+
+  @override
+  void initState() {
+    super.initState();
+    pinController = TextEditingController();
+    startResendTimer();
+  }
+
+  @override
+  void dispose() {
+    pinController.dispose();
+    _resendTimer?.cancel();
+    super.dispose();
+  }
+
+  void startResendTimer() {
+    setState(() {
+      _isResendEnabled = false;
+    });
+    _resendTimer = Timer(const Duration(seconds: 60), () {
+      setState(() {
+        _isResendEnabled = true;
+      });
+    });
+  }
+
+  void resendCode() {
+    final ap = Provider.of<custom_auth.AuthProvider>(context, listen: false);
+    ap.signInWithPhone(context, widget.phoneNumber); // Resend the code with the phone number
+    startResendTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = Provider.of<custom_auth.AuthProvider>(context, listen: true).isLoading;
 
 
-    final pinController = TextEditingController();
+    // final pinController = TextEditingController();
     const focusedBorderColor = Colors.black87;
     const borderColor = Colors.black;
 
@@ -46,11 +85,13 @@ class _otpNvState extends State<otpNv> {
         border: Border.all(color: borderColor),
       ),
     );
+    
+
 
     return Scaffold(
       body: SafeArea(
         child: isLoading == true
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator(color: Colors.black,))
             : Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 40, horizontal: 35),
@@ -61,7 +102,7 @@ class _otpNvState extends State<otpNv> {
                       const SizedBox(
                         height: 60,
                       ),
-                      const Text('مرحبا ',
+                      const Text('التحقق',
                           style: TextStyle(
                             fontSize: 34,
                             color: Colors.black,
@@ -72,7 +113,7 @@ class _otpNvState extends State<otpNv> {
                         height: 35,
                       ),
                       const Text(
-                        ' أدخل لرقم هاتفك لتسجيل الدخول',
+                       'أدخل كود التحقق لتسجيل الدخول',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.black,
@@ -85,85 +126,42 @@ class _otpNvState extends State<otpNv> {
                         height: 30,
                       ),
                       Center(
-                        child: Container(
-                          // margin: const EdgeInsets.all(20),
-                          child: Directionality(
-                            textDirection: TextDirection.ltr,
-                            child: Form(
-                              child: Pinput(
-                                androidSmsAutofillMethod:
-                                    AndroidSmsAutofillMethod.none,
-                                controller: pinController,
-                                length: 6,
-                                defaultPinTheme: defaultPintheme.copyWith(
-                                  decoration:
-                                      defaultPintheme.decoration!.copyWith(
-                                    borderRadius: BorderRadius.circular(3),
-                                    border: Border.all(
-                                        color: focusedBorderColor, width: 1.9),
-                                  ),
+                        child: Directionality(
+                          textDirection: TextDirection.ltr,
+                          
+                            child: Pinput(
+                              androidSmsAutofillMethod:
+                                  AndroidSmsAutofillMethod.none,
+                              controller: pinController,
+                              length: 6,
+                              defaultPinTheme: defaultPintheme.copyWith(
+                                decoration:
+                                    defaultPintheme.decoration!.copyWith(
+                                  borderRadius: BorderRadius.circular(3),
+                                  border: Border.all(
+                                      color: focusedBorderColor, width: 1.9),
                                 ),
-                                focusedPinTheme: defaultPintheme.copyWith(
-                                  decoration:
-                                      defaultPintheme.decoration!.copyWith(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                        color: focusedBorderColor, width: 2.6),
-                                  ),
-                                ),
-                                onChanged: (pin) => debugPrint(pin),
-                                onSubmitted: (value) {
-                                  setState(() {
-                                    otpcode = value;
-                                  });
-                                },
                               ),
+                              focusedPinTheme: defaultPintheme.copyWith(
+                                decoration:
+                                    defaultPintheme.decoration!.copyWith(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: focusedBorderColor, width: 2.6),
+                                ),
+                              ),
+                               onChanged: (pin) => debugPrint(pin),
+                              onCompleted: (value) {
+                                setState(() {
+                                  otpcode = value;
+                                  
+                                });
+                              },
                             ),
-                          ),
+                          
                         ),
                       ),
-                      Row(
-                        // crossAxisAlignment: CrossAxisAlignment,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                              margin: const EdgeInsets.only(right: 40),
-                              child: TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  'إرسال لرقم',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: 'Cairo',
-                                  ),
-                                ),
-                              )),
-                          Container(
-                            margin: const EdgeInsets.only(left: 60),
-                            child: const Text(
-                              'did not get the code',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Cairo',
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            'resend new code',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Cairo',
-                            ),
-                          ),
-                        ],
-                      ),
+                   
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 30),
                         child: SizedBox(
@@ -180,7 +178,7 @@ class _otpNvState extends State<otpNv> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black),
                             child: const Text(
-                              ' الدخول',
+                              'تأكيد',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white,
@@ -191,13 +189,58 @@ class _otpNvState extends State<otpNv> {
                           ),
                         ),
                       ),
+
+                      Container(
+                              margin: const EdgeInsets.only(right: 40),
+                              child: Center(
+                                child: TextButton(
+                                   onPressed: _isResendEnabled
+                                ? () {
+                                    resendCode(); // Trigger the resend function
+                                  }
+                                : null,
+                            // child: Text(
+                            //   _isResendEnabled ? 'resend new code' : 'wait for 60 seconds',
+                              
+                            // ),
+                                  
+                                
+                                  
+                                  child: const  Text(
+                                    'إرسال الرمز مجددا       ',
+                                    style: TextStyle(
+                                fontSize: 11,
+                                color:  Colors.black,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Cairo',
+                              ),
+                                  ),
+                                ),
+                              )),
+
+                              Container(
+                              margin: const EdgeInsets.only(right: 40),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                            'تغير رقم الهاتف         '  ,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Cairo',
+                                  ),
+                                ),
+                              )),
                     ],
                   ),
                 ),
               ),
       ),
 
-      // ),
+      
     );
   }
 
@@ -209,157 +252,22 @@ class _otpNvState extends State<otpNv> {
       context,
      widget.verificationId,
        userOtp,
+       
        () {
-        
+        ap.checkExistingUser().then((value) async {
+         if(value == true){
+           
+         }
+         else {
+         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const problmCat()), (route) => false);
+         }
+        });
+
       },
     );
   }
 }
 
 
-
-
-/* 
-
-import 'package:flutter/material.dart';
-import 'package:pinput/pinput.dart';
-
-void main() {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text('Pinput Example'),
-          centerTitle: true,
-          titleTextStyle: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: Color.fromRGBO(30, 60, 87, 1),
-          ),
-        ),
-        body: const FractionallySizedBox(
-          widthFactor: 1,
-          child: PinputExample(),
-        ),
-      ),
-    ),
-  );
-}
-
-/// This is the basic usage of Pinput
-/// For more examples check out the demo directory
-class PinputExample extends StatefulWidget {
-  const PinputExample({Key? key}) : super(key: key);
-
-  @override
-  State<PinputExample> createState() => _PinputExampleState();
-}
-
-class _PinputExampleState extends State<PinputExample> {
-  final pinController = TextEditingController();
-  final focusNode = FocusNode();
-  final formKey = GlobalKey<FormState>();
-
-  @override
-  void dispose() {
-    pinController.dispose();
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
-    const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
-
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: const TextStyle(
-        fontSize: 22,
-        color: Color.fromRGBO(30, 60, 87, 1),
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(19),
-        border: Border.all(color: borderColor),
-      ),
-    );
-
-    /// Optionally you can use form to validate the Pinput
-    return Form(
-      key: formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Directionality(
-            // Specify direction if desired
-            textDirection: TextDirection.ltr,
-            child: Pinput(
-              controller: pinController,
-              focusNode: focusNode,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
-              listenForMultipleSmsOnAndroid: true,
-              defaultPinTheme: defaultPinTheme,
-              separatorBuilder: (index) => const SizedBox(width: 8),
-              validator: (value) {
-                return value == '2222' ? null : 'Pin is incorrect';
-              },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
-              hapticFeedbackType: HapticFeedbackType.lightImpact,
-              onCompleted: (pin) {
-                debugPrint('onCompleted: $pin');
-              },
-              onChanged: (value) {
-                debugPrint('onChanged: $value');
-              },
-              cursor: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 9),
-                    width: 22,
-                    height: 1,
-                    color: focusedBorderColor,
-                  ),
-                ],
-              ),
-              focusedPinTheme: defaultPinTheme.copyWith(
-                decoration: defaultPinTheme.decoration!.copyWith(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: focusedBorderColor),
-                ),
-              ),
-              submittedPinTheme: defaultPinTheme.copyWith(
-                decoration: defaultPinTheme.decoration!.copyWith(
-                  color: fillColor,
-                  borderRadius: BorderRadius.circular(19),
-                  border: Border.all(color: focusedBorderColor),
-                ),
-              ),
-              errorPinTheme: defaultPinTheme.copyBorderWith(
-                border: Border.all(color: Colors.redAccent),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              focusNode.unfocus();
-              formKey.currentState!.validate();
-            },
-            child: const Text('Validate'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-  */
 
 
