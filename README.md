@@ -21,7 +21,7 @@ Das Ziel der Anwendung ist es, die Kommunikation zwischen Bürgern und den zust�
 
 ## Screenshots
 
-Bitte fügen Sie Screenshots im Ordner `assets/screenshots` ein, zum Beispiel:
+
 
 ![screenshot1](assets/screenshots/screenshot1.png)
 ![screenshot2](assets/screenshots/screenshot2.png)
